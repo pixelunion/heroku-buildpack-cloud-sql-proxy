@@ -1,7 +1,7 @@
 # Google Cloud SQL Proxy buildpack
-Connect to Google Cloud SQL from an external application without a static (or public) IP address.  
+Connect to Google Cloud SQL from an external application without a static (or public) IP address.
 
-The buildpack will install Google's Proxy service to the localhost and configure it with credentials supplied via the environment variables. After starting the proxy service, your application will have access to the Cloud SQL instance by connecting and querying the proxy running on the localhost.  
+The buildpack will install Google's Proxy service to the localhost and configure it with credentials supplied via the environment variables. After starting the proxy service, your application will have access to the Cloud SQL instance by connecting and querying the proxy running on the localhost.
 
 The proxy establishes the actual connection to the Cloud SQL instance and acts as a 'proxy' that communicates requests and responses between your application and the Cloud SQL instance. Learn more: [Google Docs](https://cloud.google.com/sql/docs/postgres/connect-external-app)
 
@@ -16,11 +16,11 @@ The proxy establishes the actual connection to the Cloud SQL instance and acts a
 
 * **Encode credential key file into a base64 string:** In the terminal run: `base64 <key-filename.json>`
 
-* **Add envs to server:**  
-`GCLOUD_CREDENTIALS=<base64 string from step before>`  
-`GCLOUD_INSTANCE=<instance-connection-name>=tcp:5432` *instance-connection-name* is found in the overview on the Cloud SQL instance  
+* **Add envs to server:**
+`GCLOUD_CREDENTIALS=<base64 string from step before>`
+`GCLOUD_INSTANCE=<instance-connection-name>=tcp:5432` *instance-connection-name* is found in the overview on the Cloud SQL instance
 `YOUR_DB_CONNECTION_URI=postgres://<username>:<password>@localhost:5432/<database-name>` *username* and *password* for the user created in the steps before
 
-* **Add buildpack to server and run `bin/run_cloud_sql_proxy` on startup:**  
-For heroku run: `heroku buildpacks:add https://github.com/CultureScience/heroku-buildpack-cloud-sql-proxy -a <name-of-your-application>`  
-And to run the proxy when starting a Node.js web process add this to the .procfile `web: bin/run_cloud_sql_proxy &>null && npm start`.
+* **Add buildpack to server and run `bin/run-cloud-sql-proxy` on startup:**
+For heroku run: `heroku buildpacks:add https://github.com/CultureScience/heroku-buildpack-cloud-sql-proxy -a <name-of-your-application>`
+And to run the proxy when starting a Node.js web process add this to the .procfile `web: bin/run-cloud-sql-proxy &>null && npm start`.
