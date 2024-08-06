@@ -30,10 +30,10 @@ if [ ! -d "$BUILD_DIR/bin" ]; then
 fi
 
 cat >"$BUILD_DIR/bin/run-cloud-sql-proxy" <<EOF
-#!/bin/sh
+#!/usr/bin/env bash
 echo "🔐 Adding credentials JSON"
 printf "%s" "\$GCLOUD_CREDENTIALS" | base64 --decode > /app/google/credentials.json
-exec /app/google/bin/cloud-sql-proxy -credential_file=/app/google/credentials.json -instances=\$GCLOUD_INSTANCE -dir=/tmp &
+exec /app/google/bin/cloud-sql-proxy "\$GCLOUD_INSTANCE" --credentials-file=/app/google/credentials.json &
 EOF
 chmod +x "$BUILD_DIR/bin/run-cloud-sql-proxy"
 
