@@ -22,5 +22,5 @@ The proxy establishes the actual connection to the Cloud SQL instance and acts a
 `YOUR_DB_CONNECTION_URI=postgres://<username>:<password>@localhost:5432/<database-name>` *username* and *password* for the user created in the steps before
 
 * **Add buildpack to server and run `bin/run_cloud_sql_proxy` on startup:**  
-For heroku run: `heroku buildpacks:add https://github.com/DanielZambelli/heroku-buildpack-cloud-sql-proxy -a <name-of-your-application>`  
+For heroku run: `heroku buildpacks:add https://github.com/CultureScience/heroku-buildpack-cloud-sql-proxy -a <name-of-your-application>`  
 And to run the proxy when starting a Node.js web process add this to the .procfile `web: bin/run_cloud_sql_proxy &>null && npm start`.
