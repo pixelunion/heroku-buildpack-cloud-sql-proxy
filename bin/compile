@@ -1,13 +1,18 @@
-#!/bin/sh
+#!/usr/bin/env bash
+# bin/compile <build-dir> <cache-dir>
 
 set -e
-
-VERSION="v2.12.0"
+set -o pipefail
 
 BUILD_DIR=$1
 CACHE_DIR=$2
+
+VERSION="v2.12.0"
+
+BUILDPACK_DIR=$(cd "$(dirname "$0")"; cd ..; pwd)
 CACHED_BINARY="$CACHE_DIR/cloud-sql-proxy"
 
+# Download cloud-sql-proxy if not cached
 if [ ! -f "$CACHED_BINARY" ]; then
   echo "💾 Downloading cloud-sql-proxy"
   mkdir -p "$CACHE_DIR"
@@ -17,24 +22,15 @@ fi
 
 BINARY_VERSION=$($CACHED_BINARY --version)
 
-echo "☁️ Vendoring cloud-sql-proxy version $BINARY_VERSION into slug"
-if [ ! -d "$BUILD_DIR/google/bin" ]; then
-  mkdir -p "$BUILD_DIR/google/bin"
-fi
+# Install to build dir
+echo "☁️ Installing cloud-sql-proxy version: $BINARY_VERSION"
+mkdir -p "$BUILD_DIR/google/bin"
 cp "$CACHED_BINARY" "$BUILD_DIR/google/bin"
 chmod +x "$BUILD_DIR/google/bin/cloud-sql-proxy"
-PATH="$BUILD_DIR/google/bin:$PATH"
 
-if [ ! -d "$BUILD_DIR/bin" ]; then
-  mkdir "$BUILD_DIR/bin"
-fi
-
-cat >"$BUILD_DIR/bin/run-cloud-sql-proxy" <<EOF
-#!/usr/bin/env bash
-echo "🔐 Adding credentials JSON"
-printf "%s" "\$GCLOUD_CREDENTIALS" | base64 --decode > /app/google/credentials.json
-exec /app/google/bin/cloud-sql-proxy "\$GCLOUD_INSTANCE" --credentials-file=/app/google/credentials.json &
-EOF
-chmod +x "$BUILD_DIR/bin/run-cloud-sql-proxy"
+# Start proxy on dyno boot
+mkdir -p "$BUILD_DIR/.profile.d/"
+cp "$BUILDPACK_DIR/extra/run-cloud-sql-proxy.sh" "$BUILD_DIR/.profile.d/"
+chmod +x "$BUILD_DIR/.profile.d/run-cloud-sql-proxy.sh"
 
 exit 0
