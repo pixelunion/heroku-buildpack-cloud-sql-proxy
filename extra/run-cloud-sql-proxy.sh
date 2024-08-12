@@ -4,5 +4,5 @@ echo "🔐 Starting Cloud SQL Proxy: $GCLOUD_INSTANCE"
 exec /app/google/bin/cloud-sql-proxy \
   "$GCLOUD_INSTANCE" \
   --credentials-file=/app/google/credentials.json \
-  --max-sigterm-delay=30 \
+  --max-sigterm-delay=30s \
   &
